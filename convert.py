@@ -315,7 +315,7 @@ def convert_vissim_24(path_input, path_output) -> None:
         for tag_parkingLot in network.findall('./parkingLots/parkingLot'):
             del tag_parkingLot.attrib['destGrp']
             del tag_parkingLot.attrib['speedForw']
-            tag_parkingLot.attrib.pop['group', "0"]
+            tag_parkingLot.set('group', '0')
             d = {k: tag_parkingLot.attrib[k] for k in sorted(tag_parkingLot.attrib)}
             tag_parkingLot.attrib.clear()
             tag_parkingLot.attrib.update(d)
@@ -342,15 +342,17 @@ def convert_vissim_24(path_input, path_output) -> None:
             if rampMeterPara is not None:
                 signalController.remove(rampMeterPara)
 
-            signalGroup = signalController.findall("./sgs/signalGroup")
-            del signalGroup.attrib['actuationType']
-            del signalGroup.attrib['callDetPortNo']
-            del signalGroup.attrib['chkOutDetPortNo']
-            del signalGroup.attrib['clearTm']
-            del signalGroup.attrib['endGreen']
-            del signalGroup.attrib['endRed']
-            del signalGroup.attrib['maxGreen']
-    except Exception as e: print("Error signalControllers:", e)
+            for signalGroup in signalController.findall("./sgs/signalGroup"):
+                del signalGroup.attrib['actuationType']
+                del signalGroup.attrib['callDetPortNo']
+                del signalGroup.attrib['chkOutDetPortNo']
+                del signalGroup.attrib['clearTm']
+                del signalGroup.attrib['endGreen']
+                del signalGroup.attrib['endRed']
+                del signalGroup.attrib['maxGreen']
+    except Exception as e:
+        print("Error signalControllers:", e)
+        raise e
         
     try:
         for tag_userDefinedAttribute in network.findall('./userDefinedAttributes/userDefinedAttribute'):
